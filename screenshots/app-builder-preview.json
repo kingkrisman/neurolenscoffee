@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "NeuroLens",
+      "hasCanvas": false,
+      "bodyTextLen": 8779,
+      "bodyTextHash": "6932307756ca3fe85927b22ac9833b2576f807375633c29d590a4e02e0c289df",
+      "bodyTextPrefix": "Skip to content NeuroLens Explore Read Library Insights Settings",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "NeuroLens",
+      "hasCanvas": false,
+      "bodyTextLen": 8771,
+      "bodyTextHash": "5bda93c863639b6eae27b47f416a86d62a566e1789eadb412c4dd642e4619d55",
+      "bodyTextPrefix": "Skip to content Explore Read Library Insights Settings Explore R",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

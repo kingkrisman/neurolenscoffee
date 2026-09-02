@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "NeuroLens",
+      "hasCanvas": false,
+      "bodyTextLen": 2422,
+      "bodyTextHash": "3ef0475e418edff2aede57509b6cd9c98fe0b4ef9d73727cab01757dd55b86e1",
+      "bodyTextPrefix": "NeuroLens Explore Read Library Insights Settings Explore Read Li",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/qa-home.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "NeuroLens",
+      "hasCanvas": false,
+      "bodyTextLen": 2414,
+      "bodyTextHash": "6a7144b0a62d5290562b45e4180c6e35d2f7afdd4132d33156f8202425e1fa45",
+      "bodyTextPrefix": "Explore Read Library Insights Settings Explore Read Library Insi",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/qa-home-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/qa-home.json"
+}
