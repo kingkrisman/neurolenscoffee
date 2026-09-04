@@ -33,6 +33,7 @@ const SAVED_KEY = "neurolens-saved-profiles";
 const BOOKMARKS_KEY = "neurolens-bookmarks";
 const HIGHLIGHTS_KEY = "neurolens-highlights";
 const CVD_KEY = "neurolens-cvd";
+const GAZE_KEY = "neurolens-gaze";
 
 export interface ReadingSnapshot {
   progress: number;
@@ -92,6 +93,7 @@ interface AppState {
   highlights: Record<string, number[]>;
   readingFeel: ReadingFeel | null;
   cvdPreview: CvdKind;
+  gazeFixation: boolean;
   hydrate: () => void;
   setTab: (tab: TabId) => void;
   startReading: (text: string, meta?: StartReadingMeta) => void;
@@ -113,6 +115,7 @@ interface AppState {
   toggleBookmark: () => void;
   submitReadingFeel: (feel: ReadingFeel) => void;
   setCvdPreview: (kind: CvdKind) => void;
+  setGazeFixation: (value: boolean) => void;
   clearData: () => void;
 }
 
@@ -240,6 +243,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   highlights: {},
   readingFeel: null,
   cvdPreview: "none",
+  gazeFixation: false,
 
   hydrate: () => {
     if (get().hydrated || typeof window === "undefined") return;
@@ -271,6 +275,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         bookmarks: Array.isArray(bookmarks) ? bookmarks : [],
         highlights: highlights && typeof highlights === "object" ? highlights : {},
         cvdPreview,
+        gazeFixation: localStorage.getItem(GAZE_KEY) === "1",
         hydrated: true,
       });
     } catch {
@@ -539,6 +544,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     localStorage.setItem(CVD_KEY, kind);
     applyColorScheme(get().profile.theme, kind);
     set({ cvdPreview: kind });
+  },
+
+  setGazeFixation: (gazeFixation) => {
+    localStorage.setItem(GAZE_KEY, gazeFixation ? "1" : "0");
+    set({ gazeFixation });
   },
 
   clearData: () => {

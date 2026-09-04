@@ -15,6 +15,7 @@ import { HeroTitle } from "@/components/hero-title";
 import { ParallaxHero } from "@/components/parallax-hero";
 import { FileDrop } from "@/components/file-drop";
 import { AccessibleBionic } from "@/components/accessible-bionic";
+import { GazeText } from "@/components/gaze-text";
 import { cn } from "@/lib/utils";
 
 const FEATURES = [
@@ -47,7 +48,8 @@ export function Landing() {
   const [uploading, setUploading] = useState(false);
   const [meta, setMeta] = useState<{ title: string; format: string; wordCount: number; readTime: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [demoBionic, setDemoBionic] = useState(true);
+  const [demoMode, setDemoMode] = useState<"bionic" | "gaze" | "standard">("bionic");
+  const [gazeStatus, setGazeStatus] = useState<"live" | "denied" | "missing" | null>(null);
 
   async function onUpload(file: File | undefined) {
     if (!file) return;
@@ -101,23 +103,39 @@ export function Landing() {
               <div className="mb-2 flex items-center justify-between gap-3">
                 <span className="font-serif text-sm text-accent italic">Fixation</span>
                 <Segmented
-                  value={demoBionic ? "bionic" : "standard"}
-                  onChange={(id) => setDemoBionic(id === "bionic")}
+                  value={demoMode}
+                  onChange={(id) => setDemoMode(id)}
                   label="Fixation preview"
                   options={[
                     { id: "bionic", label: "Bionic" },
-                    { id: "standard", label: "Standard" },
+                    { id: "gaze", label: "Gaze" },
+                    { id: "standard", label: "Off" },
                   ]}
                   className="h-9"
                 />
               </div>
               <p className="text-left text-sm leading-relaxed sm:text-base">
-                {demoBionic ? (
+                {demoMode === "bionic" ? (
                   <AccessibleBionic text={DEMO_SENTENCE} html={processBionicText(DEMO_SENTENCE, 0.55, true)} />
+                ) : demoMode === "gaze" ? (
+                  <GazeText text={DEMO_SENTENCE} onStatus={setGazeStatus} />
                 ) : (
                   DEMO_SENTENCE
                 )}
               </p>
+              {demoMode === "gaze" ? (
+                <p className="mt-3 text-xs text-muted">
+                  {gazeStatus === "denied"
+                    ? "Camera access was blocked. Allow it to light the word you look at."
+                    : gazeStatus === "missing"
+                      ? "This browser has no camera."
+                      : "Looks stay on this device. The lit word is wherever your eyes are."}
+                </p>
+              ) : (
+                <p className="mt-3 text-xs text-muted">
+                  Bionic thickens the start of each word so the eye has somewhere to land. Gaze uses the webcam, locally, to follow the word you are on.
+                </p>
+              )}
             </Card>
           </StaggerBlock>
         </div>

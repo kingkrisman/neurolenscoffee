@@ -250,6 +250,9 @@ export function ReaderControls({ onClose }: { onClose: () => void }) {
               onValueChange={([value]) => setProfile({ ...profile, bionicStrength: value ?? 0 })}
               aria-label="Fixation strength"
             />
+            <p className="mt-2 text-xs text-muted">
+              Bionic thickens word starts so saccades have a landing. Use Gaze in the reader toolbar to follow the word you look at — the camera never leaves this device.
+            </p>
           </div>
           <div className="flex h-11 items-center justify-between">
             <span className="inline-flex items-center gap-2">

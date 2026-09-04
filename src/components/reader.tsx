@@ -13,6 +13,7 @@ import {
   StickyNote,
   Volume2,
   VolumeX,
+  ScanEye,
 } from "lucide-react";
 import { processBionicText } from "@/lib/bionic";
 import { simplifyText } from "@/lib/text-simplifier";
@@ -43,6 +44,7 @@ import { useReadingTracker } from "@/lib/adaptive/use-reading-tracker";
 import { autoScrollDeltaPx, resolveRhythmCurve, tokenContextAtProgress } from "@/lib/rhythm";
 import { splitSentenceSpans } from "@/lib/sentences";
 import { ReadingFeelBar } from "@/components/reading-feel";
+import { GazeFollow } from "@/components/gaze-follow";
 
 export function Reader() {
   const text = useAppStore((s) => s.text);
@@ -61,6 +63,8 @@ export function Reader() {
   const toggleHighlight = useAppStore((s) => s.toggleHighlight);
   const toggleBookmark = useAppStore((s) => s.toggleBookmark);
   const bookmarks = useAppStore((s) => s.bookmarks);
+  const gazeFixation = useAppStore((s) => s.gazeFixation);
+  const setGazeFixation = useAppStore((s) => s.setGazeFixation);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const startReading = useAppStore((s) => s.startReading);
@@ -289,7 +293,7 @@ export function Reader() {
         <ReaderControls onClose={() => setControlsOpen(false)} />
       </Sheet>
 
-      <div ref={scrollRef} className="reader-scroll min-h-0 flex-1 overflow-y-auto">
+      <div ref={scrollRef} className="reader-scroll relative min-h-0 flex-1 overflow-y-auto">
         <article
           aria-labelledby="reading-title"
           className={cn(
@@ -367,6 +371,7 @@ export function Reader() {
           })}
         </article>
       </div>
+      <GazeFollow scroller={scrollRef} enabled={gazeFixation} onLine={setActiveLine} />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-5 flex flex-col items-center gap-3 px-3">
         <ReadingFeelBar />
@@ -383,6 +388,20 @@ export function Reader() {
               </Button>
             </TooltipTrigger>
             <TooltipContent>Options</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant={gazeFixation ? "default" : "ghost"}
+                size="icon-sm"
+                onClick={() => setGazeFixation(!gazeFixation)}
+                aria-label="Gaze fixation"
+                aria-pressed={gazeFixation}
+              >
+                <ScanEye size={16} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Gaze fixation</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>

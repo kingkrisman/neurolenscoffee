@@ -199,6 +199,16 @@
     letter-spacing: -0.02em;
   }
 
+  .gaze-word {
+    border-radius: 3px;
+    transition: background-color 120ms var(--ease-standard);
+  }
+
+  .gaze-word.is-gazed {
+    background: color-mix(in oklab, var(--color-accent) 22%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 22%, transparent);
+  }
+
   .reading-line {
     border-radius: var(--radius-xs);
     transition-property: opacity, background-color, box-shadow;
