@@ -23,6 +23,7 @@ import {
   type Session,
   type TabId,
 } from "./types";
+import { clearPdfSession } from "./pdf-session";
 
 const SESSIONS_KEY = "neurolens-sessions";
 const PROFILE_KEY = "neurolens-profile";
@@ -56,6 +57,7 @@ export interface StartReadingMeta {
   title?: string;
   kind?: ContentKind;
   sourceId?: string;
+  pdf?: boolean;
 }
 
 const EMPTY_READING: ReadingSnapshot = {
@@ -94,9 +96,13 @@ interface AppState {
   readingFeel: ReadingFeel | null;
   cvdPreview: CvdKind;
   gazeFixation: boolean;
+  pdfPage: number;
+  chapterIndex: number;
   hydrate: () => void;
   setTab: (tab: TabId) => void;
   startReading: (text: string, meta?: StartReadingMeta) => void;
+  setPdfPage: (page: number) => void;
+  setChapterIndex: (index: number) => void;
   setMode: (mode: ReadingMode) => void;
   setProfile: (profile: ReadingProfile) => void;
   setControlsOpen: (open: boolean) => void;
@@ -244,6 +250,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   readingFeel: null,
   cvdPreview: "none",
   gazeFixation: false,
+  pdfPage: 1,
+  chapterIndex: 0,
 
   hydrate: () => {
     if (get().hydrated || typeof window === "undefined") return;
@@ -291,8 +299,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   startReading: (raw, meta) => {
-    const text = raw.trim();
+    const text = raw.trim() || (meta?.pdf ? " " : "");
     if (!text) return;
+    if (!meta?.pdf) clearPdfSession();
     const title = meta?.title || text.split(/\n/)[0]?.slice(0, 60) || "Untitled reading";
     const kind = meta?.kind ?? "text";
     const sessions = [
@@ -314,8 +323,13 @@ export const useAppStore = create<AppState>((set, get) => ({
       dismissedRules: [],
       lastAdaptiveChange: null,
       readingFeel: null,
+      pdfPage: 1,
+      chapterIndex: 0,
     });
   },
+
+  setPdfPage: (pdfPage) => set({ pdfPage: Math.max(1, pdfPage) }),
+  setChapterIndex: (chapterIndex) => set({ chapterIndex: Math.max(0, chapterIndex) }),
 
   setMode: (mode) => {
     const current = get().profile;

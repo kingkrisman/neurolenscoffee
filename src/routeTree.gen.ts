@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
+import { Route as ApiGutendexSplatRouteImport } from './routes/api/gutendex.$'
 import { Route as ApiOpenlibrarySplatRouteImport } from './routes/api/openlibrary.$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const ThankYouRoute = ThankYouRouteImport.update({
   path: '/thank-you',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGutendexSplatRoute = ApiGutendexSplatRouteImport.update({
+  id: '/api/gutendex/$',
+  path: '/api/gutendex/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiOpenlibrarySplatRoute = ApiOpenlibrarySplatRouteImport.update({
   id: '/api/openlibrary/$',
   path: '/api/openlibrary/$',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/thank-you': typeof ThankYouRoute
+  '/api/gutendex/$': typeof ApiGutendexSplatRoute
   '/api/openlibrary/$': typeof ApiOpenlibrarySplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/thank-you': typeof ThankYouRoute
+  '/api/gutendex/$': typeof ApiGutendexSplatRoute
   '/api/openlibrary/$': typeof ApiOpenlibrarySplatRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,29 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/privacy': typeof PrivacyRoute
   '/thank-you': typeof ThankYouRoute
+  '/api/gutendex/$': typeof ApiGutendexSplatRoute
   '/api/openlibrary/$': typeof ApiOpenlibrarySplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/privacy' | '/thank-you' | '/api/openlibrary/$'
+  fullPaths:
+    '/' | '/privacy' | '/thank-you' | '/api/gutendex/$' | '/api/openlibrary/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/privacy' | '/thank-you' | '/api/openlibrary/$'
-  id: '__root__' | '/' | '/privacy' | '/thank-you' | '/api/openlibrary/$'
+  to: '/' | '/privacy' | '/thank-you' | '/api/gutendex/$' | '/api/openlibrary/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/privacy'
+    | '/thank-you'
+    | '/api/gutendex/$'
+    | '/api/openlibrary/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PrivacyRoute: typeof PrivacyRoute
   ThankYouRoute: typeof ThankYouRoute
+  ApiGutendexSplatRoute: typeof ApiGutendexSplatRoute
   ApiOpenlibrarySplatRoute: typeof ApiOpenlibrarySplatRoute
 }
 
@@ -92,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ThankYouRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/gutendex/$': {
+      id: '/api/gutendex/$'
+      path: '/api/gutendex/$'
+      fullPath: '/api/gutendex/$'
+      preLoaderRoute: typeof ApiGutendexSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/openlibrary/$': {
       id: '/api/openlibrary/$'
       path: '/api/openlibrary/$'
@@ -106,6 +130,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PrivacyRoute: PrivacyRoute,
   ThankYouRoute: ThankYouRoute,
+  ApiGutendexSplatRoute: ApiGutendexSplatRoute,
   ApiOpenlibrarySplatRoute: ApiOpenlibrarySplatRoute,
 }
 export const routeTree = rootRouteImport

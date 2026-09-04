@@ -203,7 +203,7 @@ export function Landing() {
             className="mt-5 w-full pl-4 pr-3.5"
             disabled={!input.trim()}
             onClick={() =>
-              startReading(input, meta ? { title: meta.title, kind: meta.format === "PDF" ? "pdf" : "text" } : undefined)
+              startReading(input, meta ? { title: meta.title, kind: meta.format === "PDF" ? "pdf" : "text", pdf: meta.format === "PDF" } : undefined)
             }
           >
             Open in reader

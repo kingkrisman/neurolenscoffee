@@ -1,3 +1,5 @@
+import { setPdfSession, clearPdfSession } from "./pdf-session.ts";
+
 export interface ProcessedDocument {
   content: string;
   title: string;
@@ -140,12 +142,9 @@ async function processPdf(file: File): Promise<ProcessedDocument> {
     }
 
     const extracted = fullText.replace(/\s+/g, " ").trim();
-    if (!extracted) {
-      throw new Error("This PDF has no selectable text. Paste the contents, or try a text file.");
-    }
-
     const name = fileName(file);
-    const clipped = extracted.slice(0, MAX_EXTRACT_CHARS);
+    setPdfSession(raw, pdf.numPages);
+    const clipped = (extracted || " ").slice(0, MAX_EXTRACT_CHARS);
     return summarize(clipped, titleFrom(name, /\.pdf$/i), "PDF", pdf.numPages);
   });
 }
@@ -163,6 +162,7 @@ export async function processDocument(file: File): Promise<ProcessedDocument> {
     if (isPdfFile(name, mime)) return await processPdf(file);
 
     if (isTextFile(name, mime)) {
+      clearPdfSession();
       let content: string;
       try {
         content = await file.text();

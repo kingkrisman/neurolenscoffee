@@ -16,6 +16,7 @@ import { isAbortError, isRemoteError } from "@/lib/remote";
 import { processDocument } from "@/lib/document-processor";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { GutenbergCatalog } from "@/components/gutenberg-catalog";
 import type { ContentKind } from "@/lib/types";
 
 function kindLabel(kind?: ContentKind) {
@@ -240,14 +241,14 @@ export function Library() {
   const startReading = useAppStore((s) => s.startReading);
   const sessions = useAppStore((s) => s.sessions);
   const bookmarks = useAppStore((s) => s.bookmarks);
-  const [section, setSection] = useState<"catalog" | "bible" | "poems" | "yours">("catalog");
+  const [section, setSection] = useState<"catalog" | "gutenberg" | "bible" | "poems" | "yours">("catalog");
   const [uploading, setUploading] = useState(false);
 
   return (
     <div className="mx-auto h-full max-w-5xl px-4 py-10 sm:px-8 sm:py-14">
       <h1 className="text-5xl">Library</h1>
       <p className="mt-3 text-muted">
-        Open Library and British National Bibliography records, a live Bible, PoetryDB, and what you’ve kept.
+        Open Library, Project Gutenberg, a live Bible, PoetryDB, and what you’ve kept.
       </p>
       <div className="mt-8 overflow-x-auto">
         <Segmented
@@ -256,12 +257,19 @@ export function Library() {
           label="Library sections"
           options={[
             { id: "catalog", label: "Catalog" },
+            { id: "gutenberg", label: "Gutenberg" },
             { id: "bible", label: "Bible" },
             { id: "poems", label: "Poems" },
             { id: "yours", label: "Yours" },
           ]}
         />
       </div>
+
+      {section === "gutenberg" && (
+        <div className="pb-16">
+          <GutenbergCatalog />
+        </div>
+      )}
 
       {section === "bible" && (
         <div className="mt-8 pb-16">
@@ -290,6 +298,7 @@ export function Library() {
                       startReading(doc.content, {
                         title: doc.title,
                         kind: doc.metadata.format === "PDF" ? "pdf" : "text",
+                        pdf: doc.metadata.format === "PDF",
                       });
                       toast.success("Opened in the reader");
                     } catch (err) {

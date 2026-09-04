@@ -45,6 +45,11 @@ import { autoScrollDeltaPx, resolveRhythmCurve, tokenContextAtProgress } from "@
 import { splitSentenceSpans } from "@/lib/sentences";
 import { ReadingFeelBar } from "@/components/reading-feel";
 import { GazeFollow } from "@/components/gaze-follow";
+import { PdfPager } from "@/components/pdf-pager";
+import { ChapterDock } from "@/components/chapter-dock";
+import { WordCard } from "@/components/word-card";
+import { detectChapters, sliceChapter } from "@/lib/chapters";
+import { getPdfPageCount } from "@/lib/pdf-session";
 
 export function Reader() {
   const text = useAppStore((s) => s.text);
@@ -65,6 +70,11 @@ export function Reader() {
   const bookmarks = useAppStore((s) => s.bookmarks);
   const gazeFixation = useAppStore((s) => s.gazeFixation);
   const setGazeFixation = useAppStore((s) => s.setGazeFixation);
+  const pdfPage = useAppStore((s) => s.pdfPage);
+  const setPdfPage = useAppStore((s) => s.setPdfPage);
+  const chapterIndex = useAppStore((s) => s.chapterIndex);
+  const setChapterIndex = useAppStore((s) => s.setChapterIndex);
+  const [lookup, setLookup] = useState<string | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const startReading = useAppStore((s) => s.startReading);
@@ -78,11 +88,16 @@ export function Reader() {
   const programmaticScroll = useRef(false);
   const didAnnounceScroll = useRef(false);
 
-  const paragraphs = useMemo(
-    () => text.split(/\n\s*\n/).filter((paragraph) => paragraph.trim()),
-    [text],
+  const chapters = useMemo(() => detectChapters(text), [text]);
+  const chapterText = useMemo(
+    () => (chapters.length > 1 ? sliceChapter(text, chapters, chapterIndex) : text),
+    [text, chapters, chapterIndex],
   );
-  const words = useMemo(() => text.trim().split(/\s+/).filter(Boolean), [text]);
+  const paragraphs = useMemo(
+    () => chapterText.split(/\n\s*\n/).filter((paragraph) => paragraph.trim()),
+    [chapterText],
+  );
+  const words = useMemo(() => chapterText.trim().split(/\s+/).filter(Boolean), [chapterText]);
   useReadingTracker(scrollRef, words.length);
 
   const lines = useMemo(() => {
@@ -312,6 +327,7 @@ export function Reader() {
           <h1 id="reading-title" className="sr-only">
             {readingTitle}
           </h1>
+          {getPdfPageCount() > 0 && <PdfPager page={pdfPage} onPage={setPdfPage} />}
           <p className="mb-8 text-xs font-medium tracking-wide text-muted uppercase">
             <span className="sr-only">
               {wordCount(text).toLocaleString()} words.
@@ -351,7 +367,17 @@ export function Reader() {
                         (activeLine === line.lineIdx || (autoScrolling && activeLine === line.lineIdx)) && "active",
                         marked.includes(line.lineIdx) && "marked",
                       )}
-                      onClick={() => {
+                      onClick={(event) => {
+                        const range =
+                          typeof document.caretRangeFromPoint === "function"
+                            ? document.caretRangeFromPoint(event.clientX, event.clientY)
+                            : null;
+                        const raw = range?.startContainer?.textContent?.slice(
+                          Math.max(0, (range.startOffset ?? 0) - 40),
+                          (range?.startOffset ?? 0) + 40,
+                        );
+                        const match = raw?.match(/[A-Za-z][A-Za-z'-]{1,}/);
+                        if (match) setLookup(match[0]);
                         if (isSpeaking) {
                           const found = lines.findIndex((item) => item.lineIdx === line.lineIdx);
                           if (found !== -1) speakAt(found);
@@ -374,6 +400,8 @@ export function Reader() {
       <GazeFollow scroller={scrollRef} enabled={gazeFixation} onLine={setActiveLine} />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-5 flex flex-col items-center gap-3 px-3">
+        <ChapterDock chapters={chapters} index={chapterIndex} onChange={setChapterIndex} />
+        {lookup && <WordCard word={lookup} onClose={() => setLookup(null)} />}
         <ReadingFeelBar />
         <RecommendationBanner />
         <div

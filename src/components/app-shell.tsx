@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Toaster } from "sonner";
 import { Search } from "lucide-react";
@@ -21,6 +21,8 @@ import { Segmented } from "@/components/segmented";
 import { LiveAnnouncer } from "@/components/live-announcer";
 import { cn } from "@/lib/utils";
 import { motionTransition, springs } from "@/lib/springs";
+import { Opening } from "@/components/opening";
+import { PageEnter } from "@/components/gsap-motion";
 
 const HAS_SCROLL_TIMELINE =
   typeof CSS !== "undefined" && CSS.supports("animation-timeline: scroll()");
@@ -107,6 +109,7 @@ export function AppShell() {
   return (
     <TooltipProvider>
       <div className="nl-shell relative flex h-dvh flex-col overflow-hidden bg-bg text-fg">
+        <Opening onDone={() => undefined} />
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
@@ -198,23 +201,31 @@ export function AppShell() {
             >
               {tab === "explore" && (
                 <Pane onProgress={setProgress}>
-                  <Landing />
+                  <PageEnter>
+                    <Landing />
+                  </PageEnter>
                 </Pane>
               )}
               {tab === "read" && <Reader />}
               {tab === "library" && (
                 <Pane onProgress={setProgress}>
-                  <Library />
+                  <PageEnter>
+                    <Library />
+                  </PageEnter>
                 </Pane>
               )}
               {tab === "insights" && (
                 <Pane onProgress={setProgress}>
-                  <Insights />
+                  <PageEnter>
+                    <Insights />
+                  </PageEnter>
                 </Pane>
               )}
               {tab === "settings" && (
                 <Pane onProgress={setProgress}>
-                  <SettingsPanel />
+                  <PageEnter>
+                    <SettingsPanel />
+                  </PageEnter>
                 </Pane>
               )}
             </motion.div>
